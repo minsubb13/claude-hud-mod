@@ -27,3 +27,10 @@ U4에서는 시제품 폴더를 삭제하고, operator가 새 세션을 열어 b
 - 2026-10-02 13:45 operator 승인: "오케이. 굿 진행하자" (tools 줄 제거 수정본 dac8ec9 기준)
 - 2026-10-02 13:48 플러그인 이름: validate가 "claude-" 접두어를 예약어로 거부하여 operator가 `hud-band`로 결정("hud-band 좋아"). 폴더 ~/claude-hud-mod와 settings 경로는 유지
 - 2026-10-02 13:56 U1~U3 verified, U4 oracle 통과(시제품 삭제, check 13/13). 계약 7번(새 세션에서 operator 확인) 대기
+- 2026-10-02 15:08 operator가 새 세션에서 band를 확인: "맘에 들어 좋아" (계약 7번). 새 프로세스의 `claude plugin list`에서 `hud-band@inline` loaded 확인, 엔진이 만든 tsconfig.json(14:16) 커밋
+
+## Carry-over
+
+- Left behind: claude-hud 플러그인은 설치된 채로 두었고 statusLine은 제거된 상태입니다. settings 백업 `~/.claude/settings.json.bak-hud-20261002`가 남아 있습니다
+- Waiting (wade): claude-hud를 최종적으로 어떻게 처리할지 정해야 합니다. 백그라운드 agent 완료 반영, TaskCreate/TaskUpdate todo 표시, 경과 시간 갱신은 실제 세션에서 더 지켜봐야 합니다(테스트는 흉내 낸 응답으로만 확인)
+- Next action: 며칠 사용해 본 뒤 claude-hud 처리 방법을 정하고, 필요하면 행동하는 기능(toast, compact)을 별도 계약으로 다룹니다
