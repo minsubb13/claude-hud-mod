@@ -29,7 +29,6 @@ main() {
     echo "check.sh: no Claude Code type declarations found" >&2
     exit 1
   fi
-  local tmp
   tmp="$(mktemp -d)"
   trap 'rm -rf "${tmp}"' EXIT
   cat > "${tmp}/tsconfig.json" <<EOF
