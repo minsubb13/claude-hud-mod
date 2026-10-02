@@ -24,3 +24,5 @@ U4에서는 시제품 폴더를 삭제하고, operator가 새 세션을 열어 b
 ## Progress log
 
 - 2026-10-02 계획을 작성했습니다.
+- 2026-10-02 13:45 operator 승인: "오케이. 굿 진행하자" (tools 줄 제거 수정본 dac8ec9 기준)
+- 2026-10-02 13:48 플러그인 이름: validate가 "claude-" 접두어를 예약어로 거부하여 operator가 `hud-band`로 결정("hud-band 좋아"). 폴더 ~/claude-hud-mod와 settings 경로는 유지

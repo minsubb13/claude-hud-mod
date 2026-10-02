@@ -1,0 +1,7 @@
+{
+  "name": "hud-band",
+  "version": "0.1.0",
+  "description": "claude-hud's session view drawn as a band above the prompt",
+  "author": { "name": "Minseop Choi" },
+  "types": "./types/index.d.ts"
+}
