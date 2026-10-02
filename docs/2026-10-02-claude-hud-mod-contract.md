@@ -13,9 +13,9 @@ Approval: wade 2026-10-02 - verification state at approval: 시제품 hud-proto�
 2. 이 mod는 `AbovePrompt` band 하나에만 그립니다. `$.ui.status`는 호출하지 않습니다. band에는 다음 내용이 이 순서로 나옵니다.
    - 1행: `[<모델 표시 이름> | <effort>] │ <cwd의 마지막 경로 한 단계>`. git 정보는 넣지 않습니다.
    - 2행: `Context <색상 바> <percent>% │ Usage <바> <5h %> (<리셋까지 남은 시간> / 5h) | <바> <7d %> (<리셋까지 남은 시간> / 7d)`. 7d는 값과 상관없이 항상 표시합니다. 값이 없으면 `--`로 표시합니다.
-   - 그 아래 활동 줄: claude-hud의 `tools-line.ts`, `agents-line.ts`, `todos-line.ts`와 같은 규칙으로 그리는 tools 줄, agents 줄(최대 3개), todos 줄입니다. 표시할 내용이 없는 줄은 생략합니다.
-   - config counts 줄과 경과 시간은 표시하지 않습니다.
-3. 활동 데이터는 transcript 파일을 파싱하지 않고 `tool.call` 훅으로 수집합니다. todos는 `TodoWrite`, `TaskCreate`, `TaskUpdate`로, agents는 `Agent`로 수집합니다.
+   - 그 아래 활동 줄: claude-hud의 `agents-line.ts`, `todos-line.ts`와 같은 규칙으로 그리는 agents 줄(최대 3개)과 todos 줄입니다. 표시할 내용이 없는 줄은 생략합니다.
+   - tools 줄, config counts 줄, 경과 시간은 표시하지 않습니다.
+3. 활동 데이터는 transcript 파일을 파싱하지 않고 `tool.call` 훅으로 수집합니다. todos는 `TodoWrite`, `TaskCreate`, `TaskUpdate`로, agents는 `Agent`로 수집합니다. 그 밖의 도구 호출은 집계하지 않습니다.
 4. 형식을 만드는 함수와 활동을 집계하는 함수에 대한 테스트가 `claude plugin test`로 통과하고, `tsc` 타입 검사가 exit 0입니다. 둘 중 최소 하나는 일부러 고장 낸 뒤 실패하는지 확인하고 되돌립니다(negative control).
 5. `~/.claude/settings.json`의 `env`에 `CLAUDE_CODE_PLUGIN_DIRS`가 `~/claude-hud-mod`를 가리키도록 추가됩니다. 백업 `settings.json.bak-hud-20261002`와 비교하면 차이는 이 키 하나와 앞서 제거한 `statusLine`뿐입니다.
 6. 이 세션 전용 시제품 폴더 `~/.claude/dev-mods/46c119f3-dbf7-4904-86a5-f3378fe1a7c5/hud-proto`를 삭제해서 band가 두 개 그려지지 않게 합니다.
@@ -50,7 +50,7 @@ Not answered: toast, 자동 compact처럼 행동하는 기능, claude-hud 플러
 - 표시 위치는 입력창 위 `AbovePrompt` band만 씁니다 (wade 2026-10-02)
 - 1행은 모델, effort, 경로이고 git은 넣지 않습니다 (wade 2026-10-02)
 - 2행의 usage는 claude-hud 방식의 바와 리셋 시간으로 그리고, 7d는 항상 표시합니다 (wade 2026-10-02)
-- 활동 줄(tools, agents, todos)은 유지하고, config counts와 경과 시간은 넣지 않습니다 (wade 2026-10-02)
+- 활동 줄은 agents와 todos만 유지합니다. tools 줄, config counts, 경과 시간은 넣지 않습니다 (wade 2026-10-02, 계약 검토 중 tools 줄 제거)
 - 설정값은 코드 상수로 고정하고, 설정 표면은 만들지 않습니다 (wade 2026-10-02)
 - claude-hud는 설치된 상태로 두고 statusLine은 제거된 채로 둡니다. 최종 처리는 이식이 끝난 뒤에 정합니다 (wade 2026-10-02)
 - 독립 리뷰 unit은 넣지 않습니다 (wade 2026-10-02)
@@ -61,7 +61,7 @@ Not answered: toast, 자동 compact처럼 행동하는 기능, claude-hud 플러
 - 모델 표시 이름은 모델 ID를 사람이 읽는 이름으로 바꿉니다. 예를 들어 `claude-opus-5-5[1m]`은 `Opus 5.5`가 됩니다. 규칙에 맞지 않는 ID는 원래 ID 그대로 표시합니다 (조정 가능)
 - 색상과 임계값은 claude-hud `colors.ts`의 값을 그대로 가져옵니다. context는 70% 미만이면 초록, 85% 미만이면 노랑, 그 이상이면 빨강입니다 (조정 가능)
 - context percent는 `$.session.usage().context.percent`를 씁니다. claude-hud가 먼저 쓰는 엔진 `used_percentage`와 같은 값입니다(`stdin.ts:65-70`) (조정 가능)
-- 활동 상태는 `session.start` 때 초기화합니다. tools 줄은 실행 중인 도구 최대 2개와 완료된 도구 상위 4개를 표시합니다(claude-hud와 같음) (조정 가능)
+- 활동 상태는 `session.start` 때 초기화합니다. agents 줄은 실행 중인 agent와 최근 완료된 agent 2개를 합쳐 최대 3개를 표시합니다(claude-hud와 같음) (조정 가능)
 - 파일 구성은 `hooks/register.tsx`에 훅을 두고, 형식 함수와 집계 함수는 테스트하기 쉽도록 `hooks/` 아래 별도 파일로 나눌 수 있습니다 (조정 가능)
 
 ## Standing rules
